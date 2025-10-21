@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGAC-Vet</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        
+        :root {
+            --primary-dark-green: #2E7D32; 
+            --secondary-light-green: #81C784; 
+            --background-light-gray: #F5F5F5; 
+            --text-dark-gray: #424242; 
+            --text-medium-gray: #757575; 
+            --feedback-success: #4CAF50; 
+            --feedback-error: #F44336; 
+            --feedback-warning: #FFC107; 
+            --white: #FFFFFF;
+            --light-gray-border: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: var(--background-light-gray);
+            color: var(--text-dark-gray);
+            line-height: 1.6;
+        }
+
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .button.primary {
+            background-color: var(--primary-dark-green);
+            color: var(--white);
+        }
+        .button.primary:hover { background-color: #388e3c; }
+
+        .button.secondary {
+            background-color: var(--secondary-light-green);
+            color: var(--primary-dark-green);
+            border: 1px solid var(--primary-dark-green);
+        }
+        .button.secondary:hover { background-color: #66bb6a; }
+
+        .button.flat {
+            background: none;
+            color: var(--primary-dark-green);
+            border: 1px solid var(--primary-dark-green);
+        }
+        .button.flat:hover { background-color: var(--secondary-light-green); }
+
+        .button.danger {
+            background-color: var(--feedback-error);
+            color: var(--white);
+        }
+        .button.danger:hover { background-color: #d32f2f; }
+
+
+        .input-field, .select-field, .textarea-field {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid var(--light-gray-border);
+            border-radius: 4px;
+            box-sizing: border-box; 
+        }
+        .input-field:focus, .select-field:focus, .textarea-field:focus {
+            border-color: var(--primary-dark-green);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--text-dark-gray);
+        }
+
+
+       
+        .header {
+            background-color: var(--primary-dark-green);
+            color: var(--white);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header .logo { font-size: 24px; font-weight: bold; text-decoration: none; color: inherit;}
+        .header .search-bar {
+            width: 400px;
+            padding: 8px 15px;
+            border-radius: 20px; 
+            border: none;
+            background-color: rgba(255, 255, 255, 0.2); 
+            color: var(--white);
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .header .search-bar::placeholder { color: rgba(255, 255, 255, 0.7); }
+        .header .search-bar:focus { background-color: rgba(255, 255, 255, 0.3); outline: none;}
+
+        .header .user-info { display: flex; align-items: center; gap: 20px; }
+        .header .user-info a {
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: opacity 0.3s ease;
+        }
+        .header .user-info a:hover { opacity: 0.8; }
+        .header .user-info .material-icons { font-size: 20px;}
+
+        .main-layout {
+            display: flex;
+            min-height: calc(100vh - 70px); 
+        }
+        .sidebar {
+            width: 220px;
+            background-color: var(--white);
+            padding: 20px 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+        .sidebar nav ul { list-style: none; padding: 0; margin: 0; }
+        .sidebar nav ul li a {
+            display: flex; 
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            text-decoration: none;
+            color: var(--text-dark-gray);
+            border-left: 4px solid transparent;
+            transition: background-color 0.3s ease, color 0.3s ease, border-left-color 0.3s ease;
+        }
+        .sidebar nav ul li a:hover, .sidebar nav ul li a.active {
+            background-color: var(--secondary-light-green);
+            color: var(--primary-dark-green);
+            border-left-color: var(--primary-dark-green);
+        }
+        .sidebar nav ul li a .material-icons { font-size: 20px; }
+        
+        .content {
+            flex-grow: 1;
+            padding: 30px;
+            background-color: var(--background-light-gray);
+        }
+        .content h1 {
+            color: var(--primary-dark-green);
+            margin-bottom: 25px;
+            font-size: 28px;
+        }
+
+
+        
+        .card {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-dark-green);
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray-border);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-title .material-icons { font-size: 22px; }
+
+        .card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .card ul li {
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--light-gray-border);
+        }
+        .card ul li:last-child {
+            border-bottom: none;
+        }
+
+        /* Estilo para Mensagens de Feedback */
+        .feedback-message {
+            font-size: 14px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+        .feedback-message.error { color: var(--feedback-error); }
+        .feedback-message.success { color: var(--feedback-success); }
+        .feedback-message.warning { color: var(--feedback-warning); }
+        
+       
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--primary-dark-green);
+            color: var(--white);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            text-decoration: none;
+            z-index: 100; 
+        }
+        .fab:hover {
+            background-color: #388e3c;
+            transform: scale(1.05);
+        }
+
+        
+        .animal-card-selectable {
+            padding: 15px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            text-align: center;
+        }
+        .animal-card-selectable:hover {
+            border-color: var(--secondary-light-green);
+            box-shadow: 0 0 0 2px var(--secondary-light-green);
+        }
+        .animal-card-selectable.selected {
+            border-color: var(--primary-dark-green);
+            box-shadow: 0 0 0 3px var(--primary-dark-green);
+            background-color: rgba(46, 125, 50, 0.05);
+        }
+        .animal-card-selectable strong { display: block; margin-bottom: 5px; font-size: 16px;}
+        .animal-card-selectable span { font-size: 13px; color: var(--text-medium-gray); }
+
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid var(--light-gray-border);
+            padding: 12px 15px;
+            text-align: left;
+        }
+        .data-table th {
+            background-color: var(--secondary-light-green);
+            color: var(--primary-dark-green);
+            font-weight: bold;
+        }
+        .data-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .data-table tr:hover {
+            background-color: #f1f1f1;
+        }
+        .data-table .actions button {
+            margin-right: 5px;
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+
+        
+        .modal {
+            display: none;
+            position: fixed; 
+            z-index: 1000; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.4); 
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: var(--white);
+            margin: auto;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 500px;
+            max-width: 90%;
+            position: relative;
+        }
+        .modal-close-button {
+            color: var(--text-medium-gray);
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            cursor: pointer;
+        }
+        .modal-close-button:hover,
+        .modal-close-button:focus {
+            color: var(--text-dark-gray);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .modal-title {
+            color: var(--primary-dark-green);
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+        .modal ul {
+            list-style: none;
+            padding: 0;
+        }
+        .modal ul li {
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--light-gray-border);
+        }
+        .modal ul li:last-child {
+            border-bottom: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="login-page" style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: var(--background-light-gray);">
+        <div style="background-color: var(--white); padding: 40px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; width: 380px;">
+            <img src="veterinario.png" alt="Logo Pet Shop" style="width: 180px; margin-bottom: 30px;">
+            <h2 style="color: var(--primary-dark-green); margin-bottom: 30px; font-size: 26px;">Login Vet</h2>
+            
+            <input type="text" id="login-user" placeholder="Usuário" class="input-field">
+            <input type="password" id="login-pass" placeholder="Senha" class="input-field">
+            
+            <p id="login-error-message" class="feedback-message error" style="display: none; text-align: left;">Usuário ou senha inválidos.</p>
+            <button class="button primary" style="width: 100%; margin-top: 10px;" onclick="handleLogin()">Entrar</button>
+            <a href="#" style="color: var(--text-medium-gray); text-decoration: none; font-size: 14px; display: block; margin-top: 20px;">Esqueceu a senha?</a>
+        </div>
+    </div>
+
+    <div id="authenticated-layout" style="display: none; flex-direction: column;">
+        <div class="header">
+            <a href="#" class="logo" onclick="showPage('dashboard')">Vet</a>
+            <input type="text" placeholder="Buscar clientes, animais, agendamentos..." class="search-bar">
+            <div class="user-info">
+                <a href="#" onclick="showNotificationsModal()"><span class="material-icons">notifications</span> Notificações (<span id="notification-count">3</span>)</a>
+                <a href="#" id="logged-in-user-info"><span class="material-icons">person</span></a>
+                <a href="#" onclick="handleLogout()"><span class="material-icons">exit_to_app</span> Sair</a>
+            </div>
+        </div>
+
+        <div class="main-layout">
+            <div class="sidebar">
+                <nav>
+                    <ul>
+                        <li><a href="#" id="sidebar-dashboard" class="active" onclick="showPage('dashboard')"><span class="material-icons">dashboard</span> Dashboard</a></li>
+                        <li><a href="#" id="sidebar-agendamentos" onclick="showPage('agendar-consulta')"><span class="material-icons">calendar_today</span> Agendamentos</a></li>
+                        <li><a href="#" id="sidebar-clientes" onclick="showPage('crud-clientes')"><span class="material-icons">group</span> Clientes</a></li>
+                        <li><a href="#" id="sidebar-animais" onclick="showPage('crud-animais')"><span class="material-icons">pets</span> Animais</a></li>
+                        <li><a href="#" id="sidebar-veterinarios" onclick="showPage('crud-veterinarios')"><span class="material-icons">medical_services</span> Veterinários</a></li>
+                        <li><a href="#" id="sidebar-especies" onclick="showPage('crud-especies')"><span class="material-icons">category</span> Espécies</a></li>
+                        <li><a href="#" id="sidebar-historico" onclick="showPage('historico')"><span class="material-icons">history</span> Histórico de Tratamentos</a></li>
+                    </ul>
+                </nav>
+            </div>
+            
+            <div class="content">
+                <div id="dashboard-content" class="page-content">
+                    <h1>Dashboard</h1>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px;">
+                        <div class="card">
+                            <div class="card-title"><span class="material-icons">event</span> Próximos Agendamentos</div>
+                            <ul>
+                                <li><strong>10:00 (Hoje)</strong> - Ana (Rex) - Dr. Carlos</li>
+                                <li><strong>11:30 (Hoje)</strong> - João (Luna) - Dra. Paula</li>
+                                <li><strong>09:00 (Amanhã)</strong> - Pedro (Fido) - Dr. Carlos</li>
+                            </ul>
+                            <button class="button secondary" style="margin-top: 15px;" onclick="showPage('agendamentos')">Ver Todos Agendamentos</button>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-title"><span class="material-icons">sick</span> Animais em Tratamento</div>
+                            <p>Total: <strong>15</strong> animais com tratamentos ativos.</p>
+                            <ul>
+                                <li>Mel (Cão) - Dr. Carlos (Próxima consulta: 05/04)</li>
+                                <li>Bolinha (Gato) - Dra. Paula (Exames pendentes)</li>
+                            </ul>
+                            <button class="button secondary" style="margin-top: 15px;">Gerenciar Tratamentos</button>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-title"><span class="material-icons">info</span> Notificações Importantes</div>
+                            <p class="feedback-message warning"><span id="notification-card-count">3</span> novas notificações.</p>
+                            <ul>
+                                <li>Cliente "Maria" com cadastro incompleto. <button class="button flat" style="padding: 5px 10px; margin-left: 10px;">Resolver</button></li>
+                                <li>Agendamento de Rex confirmado.</li>
+                            </ul>
+                            <button class="button secondary" style="margin-top: 15px;" onclick="showNotificationsModal()">Ver Todas Notificações</button>
+                        </div>
+                    </div>
+
+                    <a href="#" class="fab" onclick="showPage('agendar-consulta')"><span class="material-icons">add</span></a>
+                </div>
+
+                <div id="agendar-consulta-content" class="page-content" style="display: none;">
+                    <h1>Agendar Nova Consulta</h1>
+
+                    <div class="card">
+                        <div class="card-title"><span class="material-icons">people_alt</span> Passo 1: Selecionar Cliente e Animal</div>
+                        <label for="search-client">Buscar Cliente (CPF ou Nome):</label>
+                        <input type="text" id="search-client" placeholder="Digite CPF ou Nome do Cliente" class="input-field">
+                        <button class="button primary" style="margin-bottom: 20px;">Buscar Cliente</button>
+
+                        <div id="client-info" style="border: 1px solid var(--light-gray-border); padding: 15px; border-radius: 4px; margin-bottom: 20px; background-color: var(--background-light-gray);">
+                            <h3 style="color: var(--primary-dark-green); margin-top: 0;">Cliente Selecionado:</h3>
+                            <p><strong>Nome:</strong> Ana Paula Silva</p>
+                            <p><strong>CPF:</strong> 123.456.789-00</p>
+                            <p><strong>Telefone:</strong> (11) 98765-4321</p>
+                            <button class="button flat" onclick="editClient(1)">Atualizar Dados do Cliente</button>
+                            <button class="button flat" style="margin-left: 10px;" onclick="showPage('crud-clientes', {mode: 'add'})">Cadastrar Novo Cliente</button>
+                        </div>
+
+                        <h3 style="color: var(--primary-dark-green); margin-top: 30px;">Animais do Cliente:</h3>
+                        <div id="animal-selection" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;">
+                            <div class="card animal-card-selectable selected" data-animal-id="1" onclick="selectAnimal(this)">
+                                <strong>Rex</strong> (Canino - Labrador)
+                                <span>Última Consulta: 20/03/2024</span>
+                            </div>
+                            <div class="card animal-card-selectable" data-animal-id="2" onclick="selectAnimal(this)">
+                                <strong>Mia</strong> (Felino - Siamês)
+                                <span>Última Consulta: 15/02/2024</span>
+                            </div>
+                            <div class="card animal-card-selectable" data-animal-id="3" onclick="selectAnimal(this)">
+                                <strong>Piu</strong> (Ave - Calopsita)
+                                <span>Última Consulta: 01/03/2024</span>
+                            </div>
+                            <button class="button flat" style="align-self: center; justify-self: start; margin-top: 10px;" onclick="showPage('crud-animais', {mode: 'add', clientId: 1})">Cadastrar Novo Animal</button>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-top: 25px;">
+                        <div class="card-title"><span class="material-icons">schedule</span> Passo 2: Detalhes da Consulta</div>
+                        
+                        <label for="select-date">Data da Consulta:</label>
+                        <input type="date" id="select-date" class="input-field">
+
+                        <label for="select-time">Hora da Consulta:</label>
+                        <input type="time" id="select-time" class="input-field">
+                        
+                        <label for="select-vet">Médico Veterinário:</label>
+                        <select id="select-vet" class="select-field">
+                            <option value="">Selecione um Veterinário</option>
+                            <option value="dr-carlos">Dr. Carlos Mendes</option>
+                            <option value="dra-paula">Dra. Paula Oliveira</option>
+                        </select>
+                        <p class="feedback-message error" id="time-slot-error" style="display: none;">Horário indisponível. Sugestões: [09:30, 14:00]</p>
+
+                        <label for="observations">Observações (Opcional):</label>
+                        <textarea id="observations" class="textarea-field" rows="3" placeholder="Ex: Animal agitado, precisa de atenção especial..."></textarea>
+                    </div>
+                    
+                    <div style="text-align: right; margin-top: 30px;">
+                        <button class="button" style="background-color: #ccc; color: var(--text-dark-gray); margin-right: 10px;">Cancelar</button>
+                        <button class="button primary">Confirmar Agendamento</button>
+                    </div>
+                </div>
+
+                <div id="crud-clientes-content" class="page-content" style="display: none;">
+                    <h1>Gerenciar Clientes</h1>
+                    <button class="button primary" onclick="showClientForm('add')"><span class="material-icons">add</span> Novo Cliente</button>
+
+                    <div id="client-list-view">
+                        <h2 style="color: var(--text-dark-gray); font-size: 22px; margin-top: 30px;">Clientes Cadastrados</h2>
+                        <input type="text" placeholder="Buscar cliente por nome ou CPF..." class="input-field" style="width: auto; display: inline-block;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>CPF</th>
+                                    <th>Telefone</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Ana Paula Silva</td>
+                                    <td>123.456.789-00</td>
+                                    <td>(11) 98765-4321</td>
+                                    <td class="actions">
+                                        <button class="button secondary" onclick="showClientForm('edit', 1)">Editar</button>
+                                        <button class="button danger">Excluir</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>João Roberto</td>
+                                    <td>987.654.321-11</td>
+                                    <td>(11) 12345-6789</td>
+                                    <td class="actions">
+                                        <button class="button secondary" onclick="showClientForm('edit', 2)">Editar</button>
+                                        <button class="button danger">Excluir</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="client-form-view" class="card" style="display: none; margin-top: 20px;">
+                        <div class="card-title" id="client-form-title">Cadastrar Novo Cliente</div>
+                        <label for="client-name">Nome:</label>
+                        <input type="text" id="client-name" class="input-field">
+                        <label for="client-cpf">CPF:</label>
+                        <input type="text" id="client-cpf" class="input-field">
+                        <label for="client-phone">Telefone:</label>
+                        <input type="text" id="client-phone" class="input-field">
+                        <label for="client-address">Endereço:</label>
+                        <input type="text" id="client-address" class="input-field">
+                        <label for="client-email">E-mail:</label>
+                        <input type="email" id="client-email" class="input-field">
+                        <div style="text-align: right; margin-top: 20px;">
+                            <button class="button" style="background-color: #ccc; color: var(--text-dark-gray); margin-right: 10px;" onclick="cancelForm('client')">Cancelar</button>
+                            <button class="button primary" onclick="saveClient()">Salvar Cliente</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="crud-animais-content" class="page-content" style="display: none;">
+                    <h1>Gerenciar Animais</h1>
+                    <button class="button primary" onclick="showAnimalForm('add')"><span class="material-icons">add</span> Novo Animal</button>
+
+                    <div id="animal-list-view">
+                        <h2 style="color: var(--text-dark-gray); font-size: 22px; margin-top: 30px;">Animais Cadastrados</h2>
+                        <input type="text" placeholder="Buscar animal por nome ou cliente..." class="input-field" style="width: auto; display: inline-block;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Espécie</th>
+                                    <th>Dono</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Rex</td>
+                                    <td>Labrador</td>
+                                    <td>Ana Paula Silva</td>
+                                    <td class="actions">
+                                        <button class="button secondary" onclick="showAnimalForm('edit', 1)">Editar</button>
+                                        <button class="button danger">Excluir</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Mia</td>
+                                    <td>Siamês</td>
+                                    <td>Ana Paula Silva</td>
+                                    <td class="actions">
+                                        <button class="button secondary" onclick="showAnimalForm('edit', 2)">Editar</button>
+                                        <button class="button danger">Excluir</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="animal-form-view" class="card" style="display: none; margin-top: 20px;">
+                        <div class="card-title" id="animal-form-title">Cadastrar Novo Animal</div>
+                        <label for="animal-owner-id">Dono (ID ou Nome):</label>
+                        <input type="text" id="animal-owner-id" class="input-field" placeholder="Ex: Ana Paula Silva (ID: 1)">
+                        <label for="animal-name">Nome:</label>
+                        <input type="text" id="animal-name" class="input-field">
+                        <label for="animal-species">Espécie:</label>
+                        <select id="animal-species" class="select-field">
+                            <option value="">Selecione a Espécie</option>
+                            <option value="canino">Canino</option>
+                            <option value="felino">Felino</option>
+                            <option value="ave">Ave</option>
+                        </select>
+                        <label for="animal-breed">Raça:</label>
+                        <input type="text" id="animal-breed" class="input-field">
+                        <label for="animal-dob">Data de Nascimento:</label>
+                        <input type="date" id="animal-dob" class="input-field">
+                        <div style="text-align: right; margin-top: 20px;">
+                            <button class="button" style="background-color: #ccc; color: var(--text-dark-gray); margin-right: 10px;" onclick="cancelForm('animal')">Cancelar</button>
+                            <button class="button primary" onclick="saveAnimal()">Salvar Animal</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="crud-veterinarios-content" class="page-content" style="display: none;">
+                    <h1>Gerenciar Veterinários</h1>
+                    <button class="button primary" onclick="showVeterinarianForm('add')"><span class="material-icons">add</span> Novo Veterinário</button>
+                    
+                    <div id="veterinarian-list-view">
+                        <h2 style="color: var(--text-dark-gray); font-size: 22px; margin-top: 30px;">Veterinários Cadastrados</h2>
+                        <input type="text" placeholder="Buscar veterinário por nome ou CRMV..." class="input-field" style="width: auto; display: inline-block;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>CRMV</th>
+                                    <th>Especialidade</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Dr. Carlos Mendes</td>
+                                    <td>CRMV/SP 12345</td>
+                                    <td>Clínico Geral</td>
+                                    <td class="actions">
+                                        <button class="button secondary" onclick="showVeterinarianForm('edit', 1)">Editar</button>
+                                        <button class="button danger">Excluir</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Dra. Paula Oliveira</td>
+                                    <td>CRMV/SP 67890</td>
+                                    <td>Dermatologia</td>
+                                    <td class="actions">
+                                        <button class="button secondary" onclick="showVeterinarianForm('edit', 2)">Editar</button>
+                                        <button class="button danger">Excluir</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="veterinarian-form-view" class="card" style="display: none; margin-top: 20px;">
+                        <div class="card-title" id="veterinarian-form-title">Cadastrar Novo Veterinário</div>
+                        <label for="vet-name">Nome:</label>
+                        <input type="text" id="vet-name" class="input-field">
+                        <label for="vet-crmv">CRMV:</label>
+                        <input type="text" id="vet-crmv" class="input-field">
+                        <label for="vet-specialty">Especialidade:</label>
+                        <input type="text" id="vet-specialty" class="input-field">
+                        <div style="text-align: right; margin-top: 20px;">
+                            <button class="button" style="background-color: #ccc; color: var(--text-dark-gray); margin-right: 10px;" onclick="cancelForm('veterinarian')">Cancelar</button>
+                            <button class="button primary" onclick="saveVeterinarian()">Salvar Veterinário</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="crud-especies-content" class="page-content" style="display: none;">
+                    <h1>Gerenciar Espécies</h1>
+                    <button class="button primary" onclick="showSpeciesForm('add')"><span class="material-icons">add</span> Nova Espécie</button>
+                    
+                    <div id="species-list-view">
+                        <h2 style="color: var(--text-dark-gray); font-size: 22px; margin-top: 30px;">Espécies Cadastradas</h2>
+                        <input type="text" placeholder="Buscar espécie por nome..." class="input-field" style="width: auto; display: inline-block;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome da Espécie</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Labrador</td>
+                                    <td class="actions">
+                                        <button class="button secondary" onclick="showSpeciesForm('edit', 1)">Editar</button>
+                                        <button class="button danger">Excluir</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Siamês</td>
+                                    <td class="actions">
+                                        <button class="button secondary" onclick="showSpeciesForm('edit', 2)">Editar</button>
+                                        <button class="button danger">Excluir</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="species-form-view" class="card" style="display: none; margin-top: 20px;">
+                        <div class="card-title" id="species-form-title">Cadastrar Nova Espécie</div>
+                        <label for="species-name">Nome da Espécie:</label>
+                        <input type="text" id="species-name" class="input-field">
+                        <div style="text-align: right; margin-top: 20px;">
+                            <button class="button" style="background-color: #ccc; color: var(--text-dark-gray); margin-right: 10px;" onclick="cancelForm('species')">Cancelar</button>
+                            <button class="button primary" onclick="saveSpecies()">Salvar Espécie</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="historico-content" class="page-content" style="display: none;">
+                    <h1>Histórico de Tratamentos</h1>
+                    <div class="card">
+                        <div class="card-title"><span class="material-icons">pets</span> Animal: Rex (Labrador - Dono: Ana Paula Silva)</div>
+                        <label for="search-history-animal">Buscar Histórico por Animal (ID ou Nome):</label>
+                        <input type="text" id="search-history-animal" placeholder="Digite o nome do animal ou ID..." class="input-field">
+                        <button class="button primary">Buscar Histórico</button>
+
+                        <div style="margin-top: 30px;">
+                            <h3 style="color: var(--primary-dark-green);">Histórico de Rex:</h3>
+                            <div class="card" style="background-color: var(--background-light-gray);">
+                                <div class="card-title" style="border-bottom: none; font-size: 16px;"><span class="material-icons">event</span> Consulta em 20/03/2024 - Dr. Carlos Mendes</div>
+                                <p><strong>Sintomas:</strong> Vômito e diarreia. </p>
+                                <p><strong>Diagnóstico:</strong> Gastroenterite leve.</p>
+                                <p><strong>Tratamento:</strong> Dieta pastosa por 3 dias, medicamento antiemético.</p>
+                                <p><strong>Exames:</strong></p>
+                                <ul>
+                                    <li>Hemograma (Solicitado: 20/03/2024 - Resultado: Normal)</li>
+                                    <li>Coproparasitológico (Solicitado: 20/03/2024 - Resultado: Negativo)</li>
+                                </ul>
+                            </div>
+                            <div class="card" style="background-color: var(--background-light-gray);">
+                                <div class="card-title" style="border-bottom: none; font-size: 16px;"><span class="material-icons">event</span> Vacinação em 15/01/2024 - Dra. Paula Oliveira</div>
+                                <p><strong>Sintomas:</strong> Nenhum (vacinação de rotina).</p>
+                                <p><strong>Diagnóstico:</strong> Animal saudável.</p>
+                                <p><strong>Tratamento:</strong> Vacina V8 aplicada.</p>
+                                <p><strong>Exames:</strong> Nenhum.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="notifications-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close-button" onclick="closeNotificationsModal()">&times;</span>
+            <h2 class="modal-title"><span class="material-icons">notifications_active</span> Notificações do Sistema</h2>
+            <ul>
+                <li>Cliente "Maria" com cadastro incompleto. <button class="button secondary" style="margin-left: 10px; padding: 5px 10px;">Resolver</button></li>
+                <li>Agendamento de Rex para 10:00 confirmado.</li>
+                <li>Resultado de exame de Luna (Hemograma) disponível para Dr. Carlos.</li>
+            </ul>
+            <button class="button primary" style="margin-top: 20px; width: 100%;" onclick="closeNotificationsModal()">Fechar</button>
+        </div>
+    </div>
+
+
+    <script>
+        let currentUser = null; // Variável para rastrear o usuário logado
+        const notifications = [
+            'Cliente "Maria" com cadastro incompleto.',
+            'Agendamento de Rex para 10:00 confirmado.',
+            'Resultado de exame de Luna (Hemograma) disponível para Dr. Carlos.'
+        ];
+
+        // --- Funções de Navegação e Login ---
+
+        function updateSidebarLinks() {
+            // Aqui você poderia ocultar/mostrar links dependendo do currentUser.role
+            // Por exemplo: if (currentUser.role === 'veterinario') { esconder links de CRUD de secretaria }
+        }
+
+        function showPage(pageName, params = {}) {
+            // Esconde todas as páginas de conteúdo
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.style.display = 'none';
+            });
+            // Remove a classe 'active' de todos os links da sidebar
+            document.querySelectorAll('.sidebar nav ul li a').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            if (pageName === 'login') {
+                document.getElementById('login-page').style.display = 'flex';
+                document.getElementById('authenticated-layout').style.display = 'none';
+                currentUser = null;
+            } else {
+                if (!currentUser) { // Se não houver usuário logado, redireciona para o login
+                    showPage('login');
+                    return;
+                }
+                document.getElementById('login-page').style.display = 'none';
+                document.getElementById('authenticated-layout').style.display = 'flex'; // Exibe o layout com header/sidebar
+                
+                // Exibe o conteúdo da página solicitada
+                const contentId = pageName + '-content';
+                const pageContent = document.getElementById(contentId);
+                if (pageContent) {
+                    pageContent.style.display = 'block';
+                    // Ativa o link correspondente na sidebar
+                    const sidebarLink = document.getElementById('sidebar-' + pageName);
+                    if (sidebarLink) {
+                        sidebarLink.classList.add('active');
+                    }
+                    // Lógica específica para formularios de CRUD
+                    if (pageName.startsWith('crud-')) {
+                        const crudType = pageName.split('-')[1]; // 'clientes', 'animais', etc.
+                        if (params.mode === 'add') {
+                            showForm(crudType, 'add', params.clientId);
+                        } else if (params.mode === 'edit') {
+                            showForm(crudType, 'edit', params.id);
+                        } else {
+                            showListView(crudType);
+                        }
+                    }
+                } else {
+                    // Caso a página não tenha conteúdo definido ainda, mostra o dashboard
+                    document.getElementById('dashboard-content').style.display = 'block';
+                    document.getElementById('sidebar-dashboard').classList.add('active');
+                }
+            }
+        }
+
+        // Simulação de login
+        function handleLogin() {
+            const user = document.getElementById('login-user').value;
+            const pass = document.getElementById('login-pass').value;
+            const errorMessage = document.getElementById('login-error-message');
+            const loggedInUserInfo = document.getElementById('logged-in-user-info');
+
+            if (user === 'secretaria' && pass === '123') { // Credenciais de exemplo
+                errorMessage.style.display = 'none';
+                currentUser = { name: 'Maria Silva', role: 'secretaria' };
+                loggedInUserInfo.innerHTML = '<span class="material-icons">person</span> Secretária: Maria Silva';
+                showPage('dashboard');
+            } else if (user === 'veterinario' && pass === '456') { // Credenciais de exemplo
+                errorMessage.style.display = 'none';
+                currentUser = { name: 'Dr. Carlos', role: 'veterinario' };
+                loggedInUserInfo.innerHTML = '<span class="material-icons">person</span> Veterinário: Dr. Carlos';
+                showPage('dashboard'); // Poderia ser um dashboard diferente
+            }
+            else {
+                errorMessage.style.display = 'block';
+            }
+        }
+
+        // Simulação de logout
+        function handleLogout() {
+            currentUser = null;
+            showPage('login');
+        }
+
+        // --- Funções Específicas das Páginas ---
+
+        // Simulação de seleção de animal na página de agendamento
+        let selectedAnimalCard = null;
+        function selectAnimal(cardElement) {
+            if (selectedAnimalCard) {
+                selectedAnimalCard.classList.remove('selected');
+            }
+            cardElement.classList.add('selected');
+            selectedAnimalCard = cardElement;
+            // console.log("Animal selecionado:", cardElement.dataset.animalId);
+            // Aqui você poderia carregar informações adicionais do animal, se necessário
+        }
+
+        // --- Funções de CRUD Genéricas para Cliente, Animal, Veterinário, Espécie ---
+
+        function showListView(type) {
+            document.getElementById(`${type}-list-view`).style.display = 'block';
+            document.getElementById(`${type}-form-view`).style.display = 'none';
+            // Em um sistema real, aqui você carregaria os dados da lista
+        }
+
+        function showForm(type, mode, id = null) {
+            document.getElementById(`${type}-list-view`).style.display = 'none';
+            document.getElementById(`${type}-form-view`).style.display = 'block';
+            const formTitle = document.getElementById(`${type}-form-title`);
+
+            if (mode === 'add') {
+                formTitle.textContent = `Cadastrar Novo ${type.charAt(0).toUpperCase() + type.slice(1).replace('s', '')}`; // ex: "Cadastrar Novo Cliente"
+                // Limpar campos do formulário
+                document.querySelectorAll(`#${type}-form-view .input-field, #${type}-form-view .select-field`).forEach(field => field.value = '');
+                // Se for adicionar animal e tiver clientId, pré-preencher
+                if (type === 'animal' && id) {
+                    document.getElementById('animal-owner-id').value = `Ana Paula Silva (ID: ${id})`; // Simulação
+                }
+            } else if (mode === 'edit' && id) {
+                formTitle.textContent = `Editar ${type.charAt(0).toUpperCase() + type.slice(1).replace('s', '')} (ID: ${id})`;
+                // Em um sistema real, aqui você carregaria os dados do item para edição
+                // Preencher campos com dados de exemplo
+                if (type === 'client') {
+                    document.getElementById('client-name').value = 'Ana Paula Silva';
+                    document.getElementById('client-cpf').value = '123.456.789-00';
+                    document.getElementById('client-phone').value = '(11) 98765-4321';
+                    document.getElementById('client-address').value = 'Rua das Flores, 123';
+                    document.getElementById('client-email').value = 'ana@example.com';
+                } else if (type === 'animal') {
+                     document.getElementById('animal-owner-id').value = 'Ana Paula Silva (ID: 1)';
+                     document.getElementById('animal-name').value = 'Rex';
+                     document.getElementById('animal-species').value = 'canino';
+                     document.getElementById('animal-breed').value = 'Labrador';
+                     document.getElementById('animal-dob').value = '2018-05-10';
+                } else if (type === 'veterinarian') {
+                    document.getElementById('vet-name').value = 'Dr. Carlos Mendes';
+                    document.getElementById('vet-crmv').value = 'CRMV/SP 12345';
+                    document.getElementById('vet-specialty').value = 'Clínico Geral';
+                } else if (type === 'species') {
+                    document.getElementById('species-name').value = 'Canino';
+                }
+            }
+        }
+
+        function cancelForm(type) {
+            showListView(type);
+        }
+
+        function saveClient() {
+            // Lógica de salvar cliente (apenas simulação)
+            alert('Cliente salvo com sucesso!');
+            showListView('clientes');
+        }
+        function saveAnimal() {
+            alert('Animal salvo com sucesso!');
+            showListView('animais');
+        }
+        function saveVeterinarian() {
+            alert('Veterinário salvo com sucesso!');
+            showListView('veterinarios');
+        }
+         function saveSpecies() {
+            alert('Espécie salva com sucesso!');
+            showListView('especies');
+        }
+
+        function editClient(clientId) {
+            // Ação de editar cliente, redireciona para o form de cliente
+            showPage('crud-clientes', {mode: 'edit', id: clientId});
+        }
+        // As funções editAnimal, editVeterinarian, editSpecies seriam similares
+
+
+        // --- Funções de Notificação (Modal) ---
+
+        function showNotificationsModal() {
+            document.getElementById('notifications-modal').style.display = 'flex';
+            // Atualizar contagem de notificações visível
+            document.getElementById('notification-count').textContent = notifications.length;
+            document.getElementById('notification-card-count').textContent = notifications.length;
+        }
+
+        function closeNotificationsModal() {
+            document.getElementById('notifications-modal').style.display = 'none';
+        }
+
+        // Inicializa a página de login ao carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            showPage('login');
+        });
+
+    </script>
+</body>
+</html>
